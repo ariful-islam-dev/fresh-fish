@@ -6,7 +6,7 @@
 
 #### Project Name: Fresh Fish
 
-### Intorduction:
+### Introduction:
 
 <p>
     The Fresh Fish Rest API is collection of eCommerce api endpoints. every users can buy fish they want to need, manage and interact with an every single user to our application. The backend application provides authentication functionality, allows user review and view all product, buy to any quantity KG of fish, and upload fish image after get on their product for review. This article outline the functional and non-functional requirements for the development of the fresh fish REST API Application.
@@ -64,7 +64,7 @@
 
 ##### Email service or message
 
-- [x] User can complete any order system can autometicaly send email or message.
+- [x] User can complete any order system can automatically send email or message.
 - [x] User can complete any product order. admin get a message how many product quantity is exist in this moment.
 
 ### Non-Functional Requirement
@@ -114,7 +114,7 @@ Fresh-fish Rest API Application does not include a user interface. It solely pro
 - LoginHistories
 - verificationCode
 
-##### Profile
+##### Profile/User
 
 - id
 - authUserId
@@ -270,3 +270,329 @@ Fresh-fish Rest API Application does not include a user interface. It solely pro
     - 500
       - Code
       - Message
+- ##### Verify-token
+  - Method: POST
+  - Access: PUBLIC
+  - Role: User
+  - Path: /auth/verify-token
+  - Request Body
+    - accessToken
+  - Response
+    - 200
+      - code: 200
+      - message
+    - 400
+      - code
+      - message
+      - data(Array of error)
+        - Field
+        - Message
+    - 500
+      - Code
+      - Message
+
+#### User
+
+- ##### Get USERS
+  - Method: GET
+  - Access: Private
+  - Role: Admin
+  - Path: /users?query=params
+  - Query:
+    - page(default-1)- current page Number
+    - limit(default-20) - the number of the object should be returned
+    - sortType(default desc) - the type of sort, it could be either ase or desc
+    - Name - name of the user
+    - Email - email of the user
+  - Response
+    - 200
+      - code
+      - message
+      - data
+        - id
+        - name
+        - email
+        - avatar
+        - Role
+        - Status
+        - createdAt
+        - updatedAt
+      - pagination
+        - page
+        - limit
+        - nextPage
+        - prevPage
+        - totalPage
+        - totalUser
+      - Links:
+        - Self
+        - NextPage
+        - PrevPage
+- ##### Get a single user
+  - Method: GET
+  - Access: Private
+  - Role: Admin + User
+  - Path: /users/:id
+  - Response
+    - 200
+      - code
+      - message
+      - data
+        - id
+        - name
+        - email
+        - avatar
+        - role
+        - status
+        - createdAt
+        - updatedAt
+    - 400
+      - code
+      - message
+    - 500
+      - Code
+      - Message
+- ##### Create a new user
+  - Method: POST
+  - Access: Private
+  - Role: Admin
+  - Path: /users
+  - Request Body
+    - Name
+    - Email
+    - Password
+    - Avatar
+    - status
+  - Response
+    - 201
+      - code
+      - Message
+      - data
+        - id
+        - name
+        - email
+        - role
+        - status
+        - createdAt
+        - updatedAt
+      - Links:
+        - self
+        - edit
+        - delete
+        - view
+    - - 400
+      - code
+      - message
+    - 500
+      - Code
+      - Message
+- ##### Update a user
+  - Method: PATCH
+  - Access: Private
+  - Role Admin + User(only own account)
+  - Path: /users/:id
+  - Request body
+    - name(optional)
+    - status(optional)
+    - role(optional)
+    - avatar(option)
+  - Response
+    - 200
+      - code
+      - message
+      - data
+        - id
+        - name
+        - email
+        - status
+        - avatar
+        - role
+        - createdAt
+        - updatedAt
+      - Links
+        - self
+    - 400
+      - code
+      - message
+    - 500
+      - Code
+      - Message
+- ##### Delete a user
+  - Method: DELETE
+  - Access: Private
+  - Role: Admin+User(only own acc)
+  - Path: /users/:id
+  - Response
+    - 204
+      - code
+      - message
+    - 400
+      - code
+      - message
+    - 401
+      - code
+      - message
+    - 500
+      - Code
+      - Message
+- ##### Change Password
+  - Method: PATCH
+  - Access: Private
+  - Role: Admin + user(only own acc)
+  - Path: /users/:id/password
+  - Request Body
+    - email
+    - password
+  - Response
+    - 200
+      - code
+      - message
+    - 400
+      - code
+      - message
+    - 401
+      - code
+      - message
+    - 500
+      - Code
+      - Message
+
+#### Fish
+
+- ##### Get All Product/fish
+  - Method: GET
+  - Access: Public
+  - Path:/fishes?query=params
+  - Query:
+    - Page(default-1) current page number
+    - Limit(default 10) the number of object be return
+    - sortType(default dsc) it could be either asc or dsc
+    - sortBy(default updated) it could be updatedAt or title
+    - Search: the search term of filter question base on the title
+  - Response
+    - 200
+      - code
+      - message
+      - data
+        - id
+        - title
+        - image
+        - price
+        - discount
+        - link
+      - Pagination
+        - Page
+        - limit
+        - nextPage
+        - prevPage
+        - totalPage
+        - totalFish
+      - links
+        - Self
+        - nextPage
+        - PrevPage
+    - 400
+      - code
+      - message
+    - 500
+      - Code
+      - Message
+- ##### Get Product Details
+  - Method: GET
+  - Access: Public
+  - Path: /fishes/:id
+  - Query:
+    - Expanded(default none) - Possible value product Id
+  - Response
+    - 200
+      - code
+      - message
+      - data
+        - id
+        - sku
+        - name
+        - image
+        - price
+        - description
+        - inventoryId
+        - status
+        - createdAt
+        - UpdatedAt
+- ##### Create a New Product
+  - Method: POST
+  - Access: Private
+  - Role: Admin
+  - Path: /fishes
+  - Request Body
+    - name
+    - sku
+    - price
+    - description
+    - image
+    - status
+  - Response
+    - 201
+      - code
+      - message
+      - data
+        - id
+        - name
+        - sku
+        - price
+        - description
+        - image
+        - status
+        - inventoryId
+        - createdAt
+        - UpdatedAt
+      - link
+        - self
+    - 400
+      - code
+      - message
+    - 500
+      - Code
+      - Message
+- ##### Update Product Info
+  - Method: PATCH
+  - Access: Private
+  - Role: Admin
+  - Path: /fishes/:id
+  - Request Body
+    - name(optional)
+    - price(optional)
+    - description(optional)
+    - image(optional)
+    - status(optional)
+  - Response
+    - 200
+      - code
+      - message
+      - data
+        - id
+        - name
+        - sku
+        - description
+        - inventoryId
+        - status
+        - price
+        - image
+    - 400
+      - code
+      - message
+    - 500
+      - Code
+      - Message
+- ##### Delete A Product
+  - Method: DELETE
+  - Access: Public
+  - Role: Admin
+  - Path: /fishes/:id
+  - Response
+    - 204
+    - 401
+      - code
+      - message
+    - 404
+      - code
+      - message
