@@ -210,3 +210,63 @@ Fresh-fish Rest API Application does not include a user interface. It solely pro
 - body
 - source
 - sentAt
+
+#### Auth
+
+- ##### Login User
+  - Method POST
+  - Access: Users
+  - Path: /auth/login
+  - Role: User+Admin
+  - Request Body
+    - email
+    - password
+  - Response
+    - 200
+      - Code: 200
+      - Message
+      - Data
+        1. access_Token
+      - Link
+        - self
+    - 400
+      - code
+      - message
+      - data(Array of error)
+        1. Field
+        2. Message
+    - 500
+      - code
+      - message
+- ##### Sign Up USER
+  - Method: POST
+  - Access: Public
+  - Role: USER
+  - Path: /auth/register
+  - Request Body
+    - Name
+    - email
+    - password
+    - avatar(optional)
+    - status
+    - Role
+    - CreatedAt
+    - UpdatedAt
+  - Response:
+    - 201
+      - code: 201
+      - Message:
+      - User Data:
+        - Access_Token
+      - Link:
+        - Self
+        - auth/login
+    - 400
+      - code
+      - message
+      - data(Array of error)
+        - Field
+        - Message
+    - 500
+      - Code
+      - Message
