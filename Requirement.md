@@ -101,7 +101,7 @@ Fresh-fish Rest API Application does not include a user interface. It solely pro
 
 ### Entities/Schema/Model
 
-##### Auth
+##### Auth/User
 
 - Id
 - Name
@@ -109,17 +109,17 @@ Fresh-fish Rest API Application does not include a user interface. It solely pro
 - Password
 - Status
 - Role[user, admin]
-- Avatar
 - Verified
 - LoginHistories
 - verificationCode
 
-##### Profile/User
+##### Profile
 
 - id
 - authUserId
 - email
 - name
+- avatar
 - address
 - phone
 - createdAt
@@ -152,6 +152,7 @@ Fresh-fish Rest API Application does not include a user interface. It solely pro
 - Id
 - sku
 - name
+- image
 - description
 - price
 - inventoryId
@@ -247,7 +248,6 @@ Fresh-fish Rest API Application does not include a user interface. It solely pro
     - Name
     - email
     - password
-    - avatar(optional)
     - status
     - Role
     - CreatedAt
@@ -297,7 +297,7 @@ Fresh-fish Rest API Application does not include a user interface. It solely pro
   - Method: GET
   - Access: Private
   - Role: Admin
-  - Path: /users?query=params
+  - Path: /profiles?query=params
   - Query:
     - page(default-1)- current page Number
     - limit(default-20) - the number of the object should be returned
@@ -332,7 +332,7 @@ Fresh-fish Rest API Application does not include a user interface. It solely pro
   - Method: GET
   - Access: Private
   - Role: Admin + User
-  - Path: /users/:id
+  - Path: /profiles/:id
   - Response
     - 200
       - code
@@ -356,12 +356,11 @@ Fresh-fish Rest API Application does not include a user interface. It solely pro
   - Method: POST
   - Access: Private
   - Role: Admin
-  - Path: /users
+  - Path: /profiles
   - Request Body
     - Name
     - Email
     - Password
-    - Avatar
     - status
   - Response
     - 201
@@ -372,7 +371,7 @@ Fresh-fish Rest API Application does not include a user interface. It solely pro
         - name
         - email
         - role
-        - status
+        - status ["ACTIVE", "INACTIVE","SUSPEND","PENDING"]
         - createdAt
         - updatedAt
       - Links:
@@ -390,7 +389,7 @@ Fresh-fish Rest API Application does not include a user interface. It solely pro
   - Method: PATCH
   - Access: Private
   - Role Admin + User(only own account)
-  - Path: /users/:id
+  - Path: /profiles/:id
   - Request body
     - name(optional)
     - status(optional)
@@ -421,7 +420,7 @@ Fresh-fish Rest API Application does not include a user interface. It solely pro
   - Method: DELETE
   - Access: Private
   - Role: Admin+User(only own acc)
-  - Path: /users/:id
+  - Path: /profiles/:id
   - Response
     - 204
       - code
@@ -439,7 +438,7 @@ Fresh-fish Rest API Application does not include a user interface. It solely pro
   - Method: PATCH
   - Access: Private
   - Role: Admin + user(only own acc)
-  - Path: /users/:id/password
+  - Path: /profile/:id/password
   - Request Body
     - email
     - password
@@ -585,7 +584,7 @@ Fresh-fish Rest API Application does not include a user interface. It solely pro
       - Message
 - ##### Delete A Product
   - Method: DELETE
-  - Access: Public
+  - Access: Private
   - Role: Admin
   - Path: /fishes/:id
   - Response
@@ -596,3 +595,304 @@ Fresh-fish Rest API Application does not include a user interface. It solely pro
     - 404
       - code
       - message
+
+#### Inventory
+
+- ##### Get Inventory Details By Id
+  - Method: GET
+  - Access: Private
+  - Role: Admin
+  - Path: /inventories/:id/details
+  - Response
+    - 200
+      - code
+      - message
+      - data
+        - id
+        - sku
+        - productId
+        - quantity
+        - histories
+          - id
+          - actionType
+          - quantityChanged
+          - lastQuantity
+          - newQuantity
+          - inventory
+          - inventoryId
+    - 400
+      - code
+      - message
+    - 500
+      - Code
+      - Message
+- ##### Get Inventory By Id
+  - Method: DELETE
+  - Access: Private
+  - Role: Admin
+  - Path: /inventories/:id
+  - - Response
+    - 200
+      - code
+      - message
+      - data
+        - id
+        - sku
+        - productId
+        - quantity
+    - 400
+      - code
+      - message
+    - 500
+      - Code
+      - Message
+- ##### Update a inventory
+  - Method: PUT
+  - Access: Private
+  - Role: Admin
+  - Path: /inventories/:id
+  - Request Body
+    - actionType
+    - quantity
+  - Response
+    - 200
+      - code
+      - message
+      - data
+        - id
+        - quantity
+        - productId
+        - inventoryId
+    - 400
+      - code
+      - message
+    - 500
+      - Code
+      - Message
+- ##### Create a new Inventory
+  - Method: POST
+  - Access: Private
+  - Role: Admin
+  - Path: /inventories/
+  - Request body:
+    - productId
+    - sku
+  - Response
+    - 201
+      - code
+      - message
+      - data
+        - id
+        - quantity
+    - 400
+      - code
+      - message
+    - 500
+      - Code
+      - Message
+
+##### Cart
+
+- ##### Add To Cart
+  - Method: POST
+  - Access: Public
+  - Role: User
+  - Path: /cart/add-to-cart
+  - Request Body
+    - productId
+    - inventoryId
+    - quantity
+  - Response
+    - 200
+      - code
+      - message
+      - data
+        - cartSessionId
+    - 400
+      - code
+      - message
+    - 500
+      - Code
+      - Message
+- ##### My Cart
+  - Method: GET
+  - Access: Public
+  - Role: User
+  - Path: /cart/me
+  - Request Headers
+    - x-cart-Session-id
+  - Response
+    - 200
+      - code
+      - message
+      - data
+        - productId
+        - quantity
+        - inventoryId
+    - - 400
+      - code
+      - message
+    - 500
+      - Code
+      - Message
+- ##### Clear My Cart
+  - Method: GET
+  - Access: Public
+  - Role: User
+  - Path: /cart/clear
+  - Request Headers
+    - x-cart-session-id
+  - Response
+    - 200
+      - code
+      - message
+
+#### Order
+
+- ##### Create a order
+  - Method: POST
+  - Access: Private
+  - Role: Admin+User
+  - Path: /order/checkout
+  - Request Body
+    - userId
+    - userName
+    - userEmail
+    - cartSessionId
+  - Response
+    - 200
+      - code
+      - message
+      - data
+        - id
+        - userId
+        - userName
+        - userEmail
+        - subtotal
+        - tax
+        - grandTotal
+        - status
+        - createdAt
+        - updatedAt
+    - 400
+      - code
+      - message
+    - 500
+      - Code
+      - Message
+- ##### GET Order By Id
+  - Method: POST
+  - Access: Private
+  - Role: Admin+User
+  - Path: /orders/:id
+  - Response
+    - 200
+      - code
+      - message
+      - data
+        - id
+        - userId
+        - userName
+        - userEmail
+        - subtotal
+        - tax
+        - grandTotal
+        - status
+        - createdAt
+        - updatedAt
+        - orderItems
+          - id
+          - orderId
+          - productId
+          - productName
+          - sku
+          - quantity
+          - price
+          - total
+    - 400
+      - code
+      - message
+    - 500
+      - Code
+      - Message
+- ##### Get All Order order
+  - Method: POST
+  - Access: Private
+  - Role: Admin
+  - Path: /orders/
+  - Response
+    - 200
+      - code
+      - message
+      - data
+        - id
+        - userId
+        - userName
+        - userEmail
+        - subtotal
+        - tax
+        - grandTotal
+        - status
+        - createdAt
+        - updatedAt
+        - orderItems
+          - id
+          - orderId
+          - productId
+          - productName
+          - sku
+          - quantity
+          - price
+          - total
+    - 400
+      - code
+      - message
+    - 500
+      - Code
+      - Message
+
+#### Email
+
+- ##### Send Email / Message
+  - Method: POST
+  - Access: Private
+  - Role: Admin+User
+  - Path: /emails/send
+  - Request Body
+    - Sender
+    - Recipient
+    - subject
+    - body
+    - source
+  - Response
+    - 200
+      - code
+      - message
+    - 400
+      - code
+      - message
+    - 500
+      - Code
+      - Message
+- ##### GET All Email
+  - Method: GET
+  - Access: Private
+  - Role: Admin
+  - Path: /emails
+  - Response
+    - 200
+    - message
+    - data
+      - id
+      - Sender
+      - Recipient
+      - subject
+      - body
+      - source
+      - sentAt
+    - 400
+      - code
+      - message
+    - 500
+      - Code
+      - Message

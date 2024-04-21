@@ -1,0 +1,1256 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: Fresh Fish
+  description: This is the Fresh fish REST API is build in using microservice architecture.
+servers:
+  - url: http://localhost:8081/api/v1
+    description: GPI Gateway Local servers
+  - url: http://localhost:4000/auth
+    description: Auth server
+  - url: http://localhost:4001/users
+    description: User server
+  - url: http://localhost:4002/fishes
+    description: Product server
+  - url: http://localhost:4003/inventories
+    description: Inventory server
+  - url: http://localhost:4004/carts
+    description: Cart server
+  - url: http://localhost:4005/orders
+    description: Order server
+  - url: http://localhost:4006/emails
+    description: Email server
+  - url: http://localhost:4007/payments
+    description: Payment server
+
+tags:
+  - name: Gateway
+    description: API Gateway Endpoints (Public)
+  - name: Auth
+    description: Auth Endpoints (Public)
+  - name: Profile
+    description: Profile Endpoints (Private+Public+Admin)
+  - name: Fish
+    description: Fish Endpoints (Private+Public+Admin)
+  - name: Inventory
+    description: Inventory Endpoints (Private)
+  - name: Cart
+    description: Cart Endpoints (Private)
+  - name: Order
+    description: Order Endpoints (Private)
+  - name: Email
+    description: Email Endpoints (Private)
+  - name: Payment
+    description: Payment Endpoints (Private)
+
+paths:
+  "/auth/register":
+    post:
+      description: Create a new account
+      tags: [Auth]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: "Assadullah Al Labib"
+                email:
+                  type: string
+                  example: "labib@me.com"
+                password:
+                  type: string
+                  example: "123456789"
+              required:
+                - name
+                - email
+                - password
+      responses:
+        201:
+          description: Registration Successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    format: int32
+                    example: 201
+                  message:
+                    type: string
+                    example: "Registration Successfully"
+                  data:
+                    type: object
+                    properties:
+                      access-token:
+                        type: string
+                        example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
+                  links:
+                    type: object
+                    properties:
+                      self:
+                        type: string
+                        example: "/auth/register"
+                      login:
+                        type: string
+                        example: "/auth/login"
+        400:
+          $ref: "#/components/responses/auth-400"
+        500:
+          $ref: "#/components/responses/500"
+  "/auth/login":
+    post:
+      description: Login in your account
+      tags:
+        - Auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: "labib@me.com"
+                password:
+                  type: string
+                  example: "123456789"
+              required:
+                - email
+                - password
+      responses:
+        200:
+          description: Login Successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    format: int32
+                    example: 200
+                  message:
+                    type: string
+                    example: login Successful
+                  data:
+                    type: object
+                    properties:
+                      access-token:
+                        type: string
+                        example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
+                  links:
+                    type: object
+                    properties:
+                      self:
+                        type: string
+                        example: "/auth/login"
+        400:
+          $ref: "#/components/responses/auth-400"
+        500:
+          $ref: "#/components/responses/500"
+  "/auth/verify-token":
+    post:
+      description: Verify Token
+      tags: [Auth]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                token:
+                  type: string
+                  example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
+              required:
+                - token
+      responses:
+        200:
+          description: Verify Successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    format: int32
+                    example: 200
+                  message:
+                    type: string
+                    example: Verify Successful
+                  data:
+                    type: object
+                    properties:
+                      access-token:
+                        type: string
+                        example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
+                  links:
+                    type: object
+                    properties:
+                      self:
+                        type: string
+                        example: "/auth/verify-token"
+                      login:
+                        type: string
+                        example: "/auth/login"
+        400:
+          $ref: "#/components/responses/auth-400"
+        500:
+          $ref: "#/components/responses/500"
+
+  "/profiles":
+    get:
+      security:
+        - bearerAuth: []
+      description: Get All Users
+      tags: [Profile]
+      responses:
+        200:
+          description: Get All Users
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/AuthDTO"
+        500:
+          $ref: "#/components/responses/500"
+
+    post:
+      security:
+        - bearerAuth: []
+      description: Create New User
+      tags: [Profile]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: "Abdullah Al Zarif"
+                email:
+                  type: string
+                  example: "zarif@example.com"
+                password:
+                  type: string
+                  example: "123456789"
+                role:
+                  type: string
+                  enum:
+                    - user
+                    - admin
+                  example: user
+                status:
+                  type: string
+                  enum: ["ACTIVE", "INACTIVE", "PENDING", "SUSPEND"]
+                  example: "PENDING"
+              required:
+                - name
+                - email
+                - password
+
+      responses:
+        200:
+          description: Create New User
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    format: int32
+                    example: 201
+                  message:
+                    type: string
+                    example: User created successfully
+                  data:
+                    $ref: "#/components/schemas/AuthDTO"
+
+        401:
+          $ref: "#/components/responses/401"
+        500:
+          $ref: "#/components/responses/500"
+  "/profiles/{id}":
+    get:
+      security:
+        - bearerAuth: []
+      description: get a single user info
+      tags: [Profile]
+      parameters:
+        - $ref: "#/components/parameters/idParams"
+      responses:
+        200:
+          description: get a single user info
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    format: int32
+                    example: 200
+                  message:
+                    type: string
+                    example: User fetched successfully
+                  data:
+                    $ref: "#/components/schemas/ProfileDTO"
+        404:
+          $ref: "#/components/responses/404"
+        500:
+          $ref: "#/components/responses/500"
+
+    patch:
+      security:
+        - bearerAuth: []
+      description: Update a user document
+      tags: [Profile]
+      parameters:
+        - $ref: "#/components/parameters/idParams"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: "zarif@example.com"
+                name:
+                  type: string
+                  example: "Abdullah Al Zarif"
+                phone:
+                  type: string
+                  example: "0123456789"
+                address:
+                  type: string
+                  example: "3123 Main St, Anytown USA"
+      responses:
+        200:
+          description: Update a user document
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    format: int32
+                    example: 200
+                  message:
+                    type: string
+                    example: User updated successfully
+                  data:
+                    $ref: "#/components/schemas/ProfileDTO"
+        400:
+          $ref: "#/components/responses/404"
+        500:
+          $ref: "#/components/responses/500"
+
+    delete:
+      security:
+        - bearerAuth: []
+      description: Delete a user document
+      tags: [Profile]
+      parameters:
+        - $ref: "#/components/parameters/idParams"
+      responses:
+        200:
+          description: Delete a user document
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    format: int32
+                    example: 200
+                  message:
+                    type: string
+                    example: User deleted successfully
+        404:
+          $ref: "#/components/responses/404"
+        500:
+          $ref: "#/components/responses/500"
+
+  "/fishes":
+    get:
+      description: Get All Fishes
+      tags: [Fish]
+      parameters:
+        - $ref: "#/components/parameters/pageParams"
+        - $ref: "#/components/parameters/limitParams"
+        - $ref: "#/components/parameters/sortTypeParams"
+        - $ref: "#/components/parameters/sortByParams"
+      responses:
+        200:
+          description: Get All Fishes
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/ProductDTO"
+                  pagination:
+                    $ref: "#/components/schemas/Pagination"
+                  links:
+                    type: object
+                    properties:
+                      self:
+                        type: string
+                        example: "/fishes"
+                      nextPage:
+                        type: string
+                        example: "/fishes?page=3&limit=10"
+                      prevPage:
+                        type: string
+                        example: "/fishes?page=1&limit=10"
+        400:
+          $ref: "#/components/responses/400"
+        500:
+          $ref: "#/components/responses/500"
+
+    post:
+      description: Create a new fish
+      tags: [Fish]
+      security:
+        - bearerAuth: []
+
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: "Hilsa Fish"
+                description:
+                  type: string
+                  example: "Hilsa Fish is collect from bay of bangles"
+                sku:
+                  type: string
+                  example: "Hilsa-123"
+                price:
+                  type: number
+                  format: float
+                  example: 1280.5
+      responses:
+        200:
+          description: Create a new fish
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProductDTO"
+        400:
+          $ref: "#/components/responses/400"
+        401:
+          $ref: "#/components/responses/401"
+        500:
+          $ref: "#/components/responses/500"
+  "/fishes/{id}":
+    get:
+      description: Get a single fish
+      tags: [Fish]
+      parameters:
+        - $ref: "#/components/parameters/idParams"
+      responses:
+        200:
+          description: Get a single fish
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProductDTO"
+        404:
+          $ref: "#/components/responses/404"
+        500:
+          $ref: "#/components/responses/500"
+    patch:
+      description: Update a fish
+      tags: [Fish]
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/idParams"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: "Hilsa Fish"
+                description:
+                  type: string
+                  example: "Hilsa Fish is collect from bay of bangles"
+                sku:
+                  type: string
+                  example: "Hilsa-123"
+                price:
+                  type: number
+                  format: float
+                  example: 1280.5
+      responses:
+        200:
+          description: Update a fish
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProductDTO"
+        404:
+          $ref: "#/components/responses/404"
+        401:
+          $ref: "#/components/responses/401"
+        500:
+          $ref: "#/components/responses/500"
+    delete:
+      description: Delete a fish
+      tags: [Fish]
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/idParams"
+      responses:
+        204:
+          description: Delete a fish
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    format: int32
+                    example: 204
+                  message:
+                    type: string
+                    example: "Product deleted successfully"
+        404:
+          $ref: "#/components/responses/404"
+        401:
+          $ref: "#/components/responses/401"
+        500:
+          $ref: "#/components/responses/500"
+  "/inventories":
+    post:
+      description: Create a new inventory
+      tags: [Inventory]
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                productId:
+                  type: string
+                  example: "fishes123"
+                sku:
+                  type: string
+                  example: "Hilsa-123"
+                quantity:
+                  type: number
+                  format: int32
+                  example: 10
+      responses:
+        201:
+          description: Create a new inventory
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InventoryDTO"
+        404:
+          $ref: "#/components/responses/404"
+        401:
+          $ref: "#/components/responses/401"
+        500:
+          $ref: "#/components/responses/500"
+    get:
+      description: Get All Inventories
+      tags: [Inventory]
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/pageParams"
+        - $ref: "#/components/parameters/limitParams"
+        - $ref: "#/components/parameters/sortTypeParams"
+        - $ref: "#/components/parameters/sortByParams"
+      responses:
+        200:
+          description: Get All Inventories
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/InventoryDTO"
+        500:
+          $ref: "#/components/responses/500"
+  "/inventories/{id}":
+    get:
+      description: Get a single inventory
+      tags: [Inventory]
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/idParams"
+      responses:
+        200:
+          description: Get a single inventory
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InventoryDTO"
+        404:
+          $ref: "#/components/responses/404"
+        401:
+          $ref: "#/components/responses/401"
+        500:
+          $ref: "#/components/responses/500"
+    put:
+      description: Update a inventory
+      tags: [Inventory]
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/idParams"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                quantity:
+                  type: number
+                  format: int32
+                  example: 10
+      responses:
+        200:
+          description: Update a inventory
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InventoryDTO"
+        404:
+          $ref: "#/components/responses/404"
+        401:
+          $ref: "#/components/responses/401"
+        500:
+          $ref: "#/components/responses/500"
+  "/cart/add-to-cart":
+    post:
+      description: Add To Cart
+      tags: [Cart]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: x-cart-session-id
+          in: header
+          required: false
+          schema:
+            type: string
+            format: string
+            default: a27cdc17-f543-45ca-a597-7d91b980ad1d
+
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                productId:
+                  type: string
+                  example: "fishes123"
+                sku:
+                  type: string
+                  example: "Hilsa-123"
+                quantity:
+                  type: number
+                  format: int32
+      responses:
+        201:
+          description: Add To Cart
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 201
+                    format: int32
+                  message:
+                    type: string
+                    example: "Added to cart successfully"
+                  cartSessionId:
+                    type: string
+                    example: a27cdc17-f543-45ca-a597-7d91b980ad1d
+        404:
+          $ref: "#/components/responses/404"
+        500:
+          $ref: "#/components/responses/500"
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  responses:
+    "auth-400":
+      description: Bad Request
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+                example: 400
+              message:
+                type: string
+                example: "Bad Request"
+              error:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    message:
+                      type: string
+                      example: Invalid password
+                    field:
+                      type: string
+                      example: password
+                    in:
+                      type: string
+                      example: body
+    # Server Error Message
+    "500":
+      description: Internal Server Error
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+                example: 500
+              error:
+                type: string
+                example: Internal Server Error
+              message:
+                type: string
+                example: We are sorry for the inconvenience. Please Try again later
+    "400":
+      description: Bad Request
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+                example: 400
+              message:
+                type: string
+                example: "Bad Request"
+    "400_field":
+      description: Bad Request
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+                example: 400
+              message:
+                type: string
+                example: "Bad Request"
+              error:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    message:
+                      type: string
+                      example: Invalid password
+                    field:
+                      type: string
+                      example: password
+    "401":
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+                example: 401
+              message:
+                type: string
+                example: "You are not permitted this operation"
+    "404":
+      description: Resources Not Found
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+                example: 404
+              message:
+                type: string
+                example: "Resources Not Found"
+  parameters:
+    pageParams:
+      in: query
+      name: page
+      description: Current Page number
+      schema:
+        type: integer
+        format: int32
+        default: 1
+    limitParams:
+      in: query
+      name: limit
+      description: The number of object should be return
+      schema:
+        type: integer
+        format: int32
+        default: 10
+    idParams:
+      in: query
+      name: id
+      required: true
+      description: ID
+      schema:
+        type: string
+        example: 1234example
+    sortTypeParams:
+      in: query
+      name: sortType
+      description: The type of sort
+      schema:
+        type: string
+        enum: [asc, desc]
+        default: desc
+    sortByParams:
+      in: query
+      name: sortBy
+      description: The field of sort
+      schema:
+        type: string
+        example: name
+
+  schemas:
+    Timestamp:
+      type: object
+      properties:
+        createdAt:
+          type: string
+          format: date-time
+          example: "2024-04-19T16:12:45.973Z"
+        updatedAt:
+          type: string
+          format: date-time
+          example: "2024-04-19T16:12:45.973Z"
+
+    ProfileDTO:
+      allOf:
+        - type: object
+          properties:
+            id:
+              type: string
+              example: user1234
+            name:
+              type: string
+              example: "Abdullah Al Zarif"
+            email:
+              type: string
+              example: "zarif@example.com"
+            phone:
+              type: string
+              example: "0123456789"
+            address:
+              type: string
+              example: "Borisal, Bangladesh"
+            avatar:
+              type: string
+              example: "https://www.gravatar.com/avatar/205e460b479e2e5b48aec07710c08d50"
+            role:
+              type: string
+              example: "user"
+            status:
+              type: string
+              example: "active"
+            Timestamp:
+              $ref: "#/components/schemas/Timestamp"
+    AuthDTO:
+      allOf:
+        - type: object
+          properties:
+            name:
+              type: string
+              example: "Abdullah Al Zarif"
+            email:
+              type: string
+              example: "zarif@example.com"
+            password:
+              type: string
+              example: "123456789"
+            role:
+              type: string
+              example: "user"
+            status:
+              type: string
+              example: "active"
+            verified:
+              type: boolean
+              example: false
+            loginHistories:
+              type: array
+              items:
+                type: object
+            verificationCode:
+              type: array
+              items:
+                type: object
+            Timestamp:
+              $ref: "#/components/schemas/Timestamp"
+    LoginHistoryDTO:
+      allOf:
+        - type: object
+          properties:
+            id:
+              type: string
+              example: user1234
+            userId:
+              type: string
+              example: user1234
+            user:
+              type: string
+              example: "Abdullah Al Zarif"
+            ipAddress:
+              type: string
+              example: "244.178.44.111"
+            userAgent:
+              type: string
+              example: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.207.132.170 Safari/537.36"
+            attempt:
+              type: string
+              enum: ["success", "failed"]
+              example: "failed"
+            loginAt:
+              type: string
+              format: date-time
+              example: "2024-04-19T16:12:45.973Z"
+    VerificationCodeDTO:
+      allOf:
+        - type: object
+          properties:
+            id:
+              type: string
+              example: user1234
+            userId:
+              type: string
+              example: user1234
+            user:
+              type: string
+              example: "Abdullah Al Zarif"
+            type:
+              type: string
+              enum:
+                - "ACCOUNT_ACTIVATION"
+                - "PASSWORD_RESET"
+                - "EMAIL_CHANGE"
+                - "PHONE_CHANGE"
+                - "TWO_FACTOR_AUTH"
+                - "TWO_FACTOR_AUTH_DISABLE"
+              example: "ACCOUNT_ACTIVATION"
+            code:
+              type: string
+              example: "123456"
+            issuedAt:
+              type: string
+              format: date-time
+              example: "2024-04-19T16:12:45.973Z"
+            verifiedAt:
+              type: string
+              format: date-time
+              example: "2024-04-19T16:12:45.973Z"
+            expiresAt:
+              type: string
+              format: date-time
+              example: "2024-04-19T16:12:45.973Z"
+
+    ProductDTO:
+      allOf:
+        - type: object
+          properties:
+            id:
+              type: string
+              example: product1234
+            sku:
+              type: string
+              example: PD_SL_001
+            name:
+              type: string
+              example: "Hilsa Fish"
+            description:
+              type: string
+              example: "Hilsa Fish is one of the favorite fish of bangladeshi People"
+            price:
+              type: integer
+              format: float
+              example: 1299.99
+            image:
+              type: string
+              example: "https://www.gravatar.com/avatar/205e460b479e2e5b48aec07710c08d50"
+            status:
+              type: string
+              enum: ["DRAFT", "PUBLISHED", "UNLISTED"]
+              example: "DRAFT"
+            inventoryId:
+              type: string
+              example: inventory12000333
+            link:
+              type: string
+              example: /fishes/product1234
+            createdAt:
+              $ref: "#/components/schemas/Timestamp/properties/createdAt"
+            updatedAt:
+              $ref: "#/components/schemas/Timestamp/properties/updatedAt"
+    InventoryDTO:
+      allOf:
+        - type: object
+          properties:
+            id:
+              type: string
+              example: inventory12000333
+            productId:
+              type: string
+              example: product1234
+            quantity:
+              type: integer
+              format: int32
+              example: 1
+
+            createdAt:
+              $ref: "#/components/schemas/Timestamp/properties/createdAt"
+            updatedAt:
+              $ref: "#/components/schemas/Timestamp/properties/updatedAt"
+    InventoryHistoryDTO:
+      allOf:
+        - type: object
+          properties:
+            id:
+              type: string
+              example: inv12000333
+            inventoryId:
+              type: string
+              example: inventory12000333
+            actionType:
+              type: string
+              enum: ["IN", "OUT"]
+              example: IN
+            quantityChanged:
+              type: integer
+              format: int32
+              example: 20
+            lastQuantity:
+              type: integer
+              format: int32
+              example: 5
+            newQuantity:
+              type: integer
+              format: int32
+              example: 25
+            createdAt:
+              $ref: "#/components/schemas/Timestamp/properties/createdAt"
+            updatedAt:
+              $ref: "#/components/schemas/Timestamp/properties/updatedAt"
+    CartDTO:
+      allOf:
+        - type: object
+          properties:
+            productId:
+              type: string
+              example: product1234
+            quantity:
+              type: integer
+              format: int32
+              example: 1
+            sku:
+              type: string
+              example: "Hilsa-123"
+
+    OrderDTO:
+      allOf:
+        - type: object
+          properties:
+            id:
+              type: string
+              example: order1234
+            userId:
+              type: string
+              example: usr123904
+            userName:
+              type: string
+              example: "Abdullah Al Zarif"
+            userEmail:
+              type: string
+              example: "zarif@example.com"
+            tax:
+              type: integer
+              format: float
+              example: 12.9
+            subTotal:
+              type: integer
+              format: float
+              example: 1305.37
+            grandTotal:
+              type: integer
+              format: float
+              example: 1427.37
+            status:
+              type: string
+              enum:
+                ["pending", "processing", "shipped", "delivered", "cancelled"]
+              example: "processing"
+            orderHistories:
+              type: array
+              items:
+                type: object
+            createdAt:
+              $ref: "#/components/schemas/Timestamp/properties/createdAt"
+            updatedAt:
+              $ref: "#/components/schemas/Timestamp/properties/updatedAt"
+
+    OrderItemsDTO:
+      allOf:
+        - type: object
+          properties:
+            id:
+              type: string
+              example: orderHistory1234
+            orderId:
+              type: string
+              example: order1234
+            productId:
+              type: string
+              example: "product1234"
+            sku:
+              type: string
+
+            createdAt:
+              $ref: "#/components/schemas/Timestamp/properties/createdAt"
+            updatedAt:
+              $ref: "#/components/schemas/Timestamp/properties/updatedAt"
+    EmailDTO:
+      allOf:
+        - type: object
+          properties:
+            id:
+              type: string
+              example: email1234
+            sender:
+              type: string
+              example: "zarif@example.com"
+            recipient:
+              type: string
+              example: "labib@example.com"
+            subject:
+              type: string
+              example: "Buy a Hilsha Fish"
+            body:
+              type: string
+              example: "Your order is on the way"
+            source:
+              type: string
+              example: "https://freshfish.com"
+            sentAt:
+              $ref: "#/components/schemas/Timestamp/properties/createdAt"
+
+    PaymentDTO:
+      allOf:
+        - type: object
+          properties:
+            id:
+              type: string
+              example: payment1234
+            total_amount:
+              type: integer
+              format: float
+              example: 1299.99
+            currency:
+              type: string
+              example: BDT
+            tran_id:
+              type: string
+              example: 123456
+            shopping_method:
+              type: string
+              example: "Bkash"
+            productId:
+              type: string
+              example: "product1234"
+            userId:
+              type: string
+              example: "usr123904"
+            buyAt:
+              $ref: "#/components/schemas/Timestamp/properties/createdAt"
+
+    Pagination:
+      type: object
+      properties:
+        page:
+          type: integer
+          format: int32
+          example: 1
+        limit:
+          type: integer
+          format: int32
+          example: 10
+        next:
+          type: integer
+          format: int32
+          example: 3
+        prev:
+          type: integer
+          format: int32
+          example: 1
+        totalItems:
+          type: integer
+          format: int32
+          example: 25
+        totalPage:
+          type: integer
+          format: int32
+          example: 3
+      required:
+        - page
+        - limit
+        - totalItems
+        - totalPage
