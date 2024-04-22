@@ -702,6 +702,293 @@ paths:
           $ref: "#/components/responses/404"
         500:
           $ref: "#/components/responses/500"
+  "/cart/me":
+    get:
+      description: Get Cart
+      tags: [Cart]
+      security:
+        - bearerAuth: []
+
+      responses:
+        200:
+          description: Get Cart
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 200
+                    format: int32
+                  message:
+                    type: string
+                    example: "Cart fetched successfully"
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      $ref: "#/components/schemas/CartDTO"
+        404:
+          $ref: "#/components/responses/404"
+        500:
+          $ref: "#/components/responses/500"
+  "/cart/clear":
+    get:
+      description: Clear Cart
+      tags: [Cart]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: x-cart-session-id
+          in: header
+          required: false
+          schema:
+            type: string
+            format: string
+            default: a27cdc17-f543-45ca-a597-7d91b980ad1d
+      responses:
+        200:
+          description: Clear Cart
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 200
+                    format: int32
+                  message:
+                    type: string
+                    example: "Cart cleared successfully"
+        404:
+          $ref: "#/components/responses/404"
+        500:
+          $ref: "#/components/responses/500"
+  "/orders":
+    get:
+      description: Get Orders
+      tags: [Order]
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/pageParams"
+        - $ref: "#/components/parameters/limitParams"
+        - $ref: "#/components/parameters/sortTypeParams"
+        - $ref: "#/components/parameters/sortByParams"
+        - name: search
+          in: query
+          required: false
+          schema:
+            type: string
+            format: string
+            example: "Hilsa Fish"
+      responses:
+        200:
+          description: Get Orders
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 200
+                    format: int32
+                  message:
+                    type: string
+                    example: "Orders fetched successfully"
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      $ref: "#/components/schemas/OrderDTO"
+        404:
+          $ref: "#/components/responses/404"
+        500:
+          $ref: "#/components/responses/500"
+    post:
+      description: Create Order
+      tags: [Order]
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userId:
+                  type: string
+                  example: "user12344"
+                userName:
+                  type: string
+                  example: "Abdullah Al Zarif"
+                userEmail:
+                  type: string
+                  example: "zarif@example.com"
+                cartSessionId:
+                  type: string
+                  example: "a27cdc17-f543-45ca-a597-7d91b980ad1d"
+      responses:
+        200:
+          description: Create Order
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: "Order created successfully"
+                  data:
+                    $ref: "#/components/schemas/OrderDTO"
+        400:
+          $ref: "#/components/responses/400"
+        500:
+          $ref: "#/components/responses/500"
+  "/orders/{id}":
+    get:
+      description: Get a single order
+      tags: [Order]
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/idParams"
+      responses:
+        200:
+          description: Get a single order
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OrderDTO"
+        404:
+          $ref: "#/components/responses/404"
+        500:
+          $ref: "#/components/responses/500"
+
+  "/emails":
+    get:
+      description: Get Emails
+      tags: [Email]
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/pageParams"
+        - $ref: "#/components/parameters/limitParams"
+        - $ref: "#/components/parameters/sortTypeParams"
+        - $ref: "#/components/parameters/sortByParams"
+        - name: search
+          in: query
+          required: false
+          schema:
+            type: string
+            format: string
+            example: "zarif@gmail.com"
+      responses:
+        200:
+          description: Get Emails
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 200
+                    format: int32
+                  message:
+                    type: string
+                    example: "Emails fetched successfully"
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      $ref: "#/components/schemas/EmailDTO"
+        404:
+          $ref: "#/components/responses/404"
+        500:
+          $ref: "#/components/responses/500"
+  "/emails/send":
+    post:
+      description: Send Email
+      tags: [Email]
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                sender:
+                  type: string
+                  example: "Abdullah Al Zarif"
+                recipient:
+                  type: string
+                  example: "zarif@gmail.com"
+                subject:
+                  type: string
+                  example: "Test Email"
+                body:
+                  type: string
+                  example: "This is a test email"
+                source:
+                  type: string
+                  example: "sender@example.com"
+
+      responses:
+        200:
+          description: Send Email
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 200
+                    format: int32
+                  message:
+                    type: string
+                    example: "Email sent successfully"
+        401:
+          $ref: "#/components/responses/401"
+        500:
+          $ref: "#/components/responses/500"
+  "/payments":
+    get:
+      description: Get All Payments
+      tags: [Payment]
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/pageParams"
+        - $ref: "#/components/parameters/limitParams"
+        - $ref: "#/components/parameters/sortTypeParams"
+        - $ref: "#/components/parameters/sortByParams"
+        - name: search
+          in: query
+          required: false
+          schema:
+            type: string
+            format: string
+            example: "OrderId1234"
+      responses:
+        200:
+          description: Get All Payments
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/PaymentDTO"
+        500:
+          $ref: "#/components/responses/500"
 
 components:
   securitySchemes:
@@ -1139,10 +1426,6 @@ components:
               enum:
                 ["pending", "processing", "shipped", "delivered", "cancelled"]
               example: "processing"
-            orderHistories:
-              type: array
-              items:
-                type: object
             createdAt:
               $ref: "#/components/schemas/Timestamp/properties/createdAt"
             updatedAt:
