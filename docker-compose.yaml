@@ -14,36 +14,35 @@ services:
     volumes:
       - postgres:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD", "pg_isready", "-U", "postgres"]
+      test: ["CMD", "pg_isready", "-U", "auth"]
       interval: 30s
       timeout: 30s
-      retries: 5
+      retries: 3
 
   pgadmin:
     image: dpage/pgadmin4
     container_name: pgadmin
-    restart: on-failure
     environment:
       - PGADMIN_DEFAULT_EMAIL=admin@example.com
       - PGADMIN_DEFAULT_PASSWORD=admin
     ports:
       - "5050:80"
       - "5051:443"
+    depends_on:
+      - postgres
 
   mailhog:
     image: mailhog/mailhog
     container_name: mailhog
-    restart: on-failure
     ports:
       - "1025:1025"
       - "1080:1080"
     volumes:
       - mailhog:/var/lib/mailhog
 
-  radis-stack:
-    image: radis
-    container_name: radis-stack
-    restart: on-failure
+  redis-stack:
+    image: redis/redis-stack:latest
+    container_name: redis-stack
     ports:
       - "6379:6379"
       - "8001:8001"
@@ -55,7 +54,6 @@ services:
   rabbitmq:
     image: rabbitmq:3-management
     container_name: rabbitmq
-    restart: on-failure
     ports:
       - "5672:5672"
       - "15672:15672"
