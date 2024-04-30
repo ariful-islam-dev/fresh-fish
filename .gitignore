@@ -1,1 +1,9 @@
 /api-gateway/node_modules
+/services/auth/.git
+/services/auth/node_modules
+/services/cart/.git
+/services/cart/node_modules
+/services/fish/.git
+/services/fish/node_modules
+/services/inventory/.git
+/services/inventory/node_modules
